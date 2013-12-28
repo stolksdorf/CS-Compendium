@@ -1,0 +1,150 @@
+
+\begin{tikzpicture}
+	[scale=.6,auto=right,every node/.style={circle}]
+	\node (n6) at (1,10) {6};
+	\node (n4) at (4,8)  {4};
+	\node (n5) at (8,9)  {5};
+	\node (n1) at (11,8) {1};
+	\node (n2) at (9,6)  {2};
+	\node (n3) at (5,5)  {3};
+
+	\foreach \from/\to in {n6/n4,n4/n5,n5/n1,n1/n2,n2/n5,n2/n3,n3/n4}
+	\draw[->] (\from) -- (\to);
+	\draw[->] (n6) .. controls +(-30:3cm) and +(-150:6cm) .. (n3);
+
+\end{tikzpicture}
+
+\subsection{Trees}
+
+\Tree[.IP [.NP [.Det \textit{the} ]
+				 [.N\1 [.N \textit{package} ]]]
+			[.I\1 [.I \textsc{3sg.Pres} ]
+				[.VP [.V\1 [.V \textit{is} ]
+							 [.AP [.Deg \textit{really} ]
+								[.A\1 [.A \textit{simple} ]
+										\qroof{\textit{to use}}.CP ]]]]]]
+
+
+\tikzstyle{every node}=[draw=black,thick,anchor=west]
+\tikzstyle{selected}=[draw=red,fill=red!30]
+\tikzstyle{optional}=[dashed,fill=gray!50]
+\begin{tikzpicture}[%
+	grow via three points={one child at (0.5,-0.7) and
+	two children at (0.5,-0.7) and (0.5,-1.4)},
+	edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
+	\node {texmf}
+	child { node {doc}}
+	child { node {fonts}}
+	child { node {source}}
+	child { node [selected] {tex}
+		child { node {generic}}
+		child { node [optional] {latex}}
+		child { node {plain}}
+	}
+	child [missing] {}
+	child [missing] {}
+	child [missing] {}
+	child { node {texdoc}};
+\end{tikzpicture}
+
+
+
+
+
+Visitor
+Type: Behavioral
+What it is: Represent an operation to be performed on the elements of an object structure. Lets you define a new operation without changing the classes of the elements on which it operates.
+
+Template Method
+Type: Behavioral
+What it is: Define the skeleton of an algorithm in an operation, deferring some steps to subclasses. Lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.
+
+Strategy
+Type: Behavioral
+What it is: Define a family of algorithms, encapsulate each one, and make them interchangeable. Lets the algorithm vary independently from clients that use it.
+
+State
+Type: Behavioral
+What it is: Allow an object to alter its behavior when its internal state changes. The object will appear to change its class.
+
+Subject Observer
+Type: Behavioral
+What it is: Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.
+
+Memento
+Type: Behavioral
+What it is: Without violating encapsulation, capture and externalize an object's internal state so that the object can be restored to this state later.
+
+Chain of Responsibility
+Type: Behavioral
+What it is: Avoid coupling the sender of a request to its receiver by giving more than one object a chance to handle the request. Chain the receiving objects and pass the request along the chain until an object handles it.
+
+Invoker Command
+Type: Behavioral
+What it is: Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support undoable operations.
+
+Interpreter
+Type: Behavioral
+What it is: Given a language, define a representation for its grammar along with an interpreter that uses the representation to interpret sentences in the language.
+
+Iterator
+Type: Behavioral
+What it is: Provide a way to access the elements of an aggregate object sequentially without exposing its underlying representation.
+
+Mediator
+Type: Behavioral
+What it is: Define an object that encapsulates how a set of objects interact. Promotes loose coupling by keeping objects from referring to each other explicitly and it lets you vary their interactions independently.
+
+
+Adapter
+Type: Structural
+What it is:Convert the interface of a class intoanother interface clients expect. Letsclasses work together that couldn'totherwise because of incompatibleinterfaces.
+
+Bridge
+Type: Structural
+What it is:Decouple an abstraction from itsimplementation so that the two can varyindependently.
+
+Composite
+Type: Structural
+What it is:Compose objects into tree structures torepresent part-whole hierarchies. Letsclients treat individual objects andcompositions of objects uniformly.
+
+Decorator
+Type: Structural
+What it is:Attach additional responsibilities to anobject dynamically. Provide a flexiblealternative to sub-classing for extendingfunctionality.
+
+Facade
+Type: Structural
+What it is:Provide a unified interface to a set ofinterfaces in a subsystem. Defines a high-level interface that makes the subsystemeasier to use.
+
+Flyweight
+Type: Structural
+What it is:Use sharing to support large numbers offine grained objects efficiently.
+
+Proxy
+Type: Structural
+What it is:Provide a surrogate or placeholder foranother object to control access to it.
+
+Singleton
+Type: Creational
+What it is:Ensure a class only has one instance andprovide a global point of access to it.
+
+Prototype
+Type: Creational
+What it is:Specify the kinds of objects to createusing a prototypical instance, andcreate new objects by copying thisprototype.
+
+Factory Method
+Type: Creational
+What it is:Define an interface for creating anobject, but let subclasses decide whichclass to instantiate. Lets a class deferinstantiation to subclasses.
+
+Builder
+Type: Creational
+What it is:Separate the construction of acomplex object from its representingso that the same constructionprocess can create different representations.
+
+Abstract Factory
+Type: Creational
+What it is:Provides an interface for creatingfamilies of related or dependentobjects without specifying their concrete class.
+
+
+
+\fi
+
