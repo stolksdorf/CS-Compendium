@@ -46,8 +46,9 @@
 \clearpage
 \setcounter{tocdepth}{2}
 \tableofcontents
-\clearpage
-\section{Introduction}
+
+%\clearpage
+%\section{Introduction}
 
 
 \clearpage
@@ -66,7 +67,6 @@ Push(x){
 	S.top = S.top + 1
 	S[S.top] = x
 }
-
 Pop(){
 	S.top = S.top - 1
 	return S[S.top + 1]
@@ -297,14 +297,23 @@ Extract(A){
 
 \subsection{Hashtables}
 \marginnote{\scriptsize{CLRS pg.257}}
-Hashtables is a data structure that map keys to values in an associated array using a {\bf Hash Function}. A hash function should be choosen that limits clumping
-
-A hash tables {\bf Load Factor} is the ratio of the number of elements in the data structure against it maximum size. When a hash table has a high load factor it has to be resized in order to avoid collisions. Resizing can be done one of two ways; {\bf Rebuilding} the entire hash table at once using a bigger size, or {\bf Incremental} where a new table is allocated, new values are only inserted into the new table, as well as moving over $n$ other elements from the old array. When the old table is empty it's removed from memory.
-
+Hashtables is a data structure that map keys to values in an associated array using a {\bf Hash Function}. A hash function maps the value to the address space of the data structure. It should be choosen that limits clumping and collisions. A hash table's {\bf Load Factor} is the ratio of the number of elements in the data structure against it maximum size. When a hash table has a high load factor it has to be resized in order to avoid collisions. {\bf Search/Insert/Delete:} $O(1)$.
+\\ \\
+Collisions resolution could be done one of three ways: {\bf Chaining}, {\bf Open Addressing}, {\bf Cuckoo}
+\begin{description}
+	\item[Chaining] Each entry in the hash table is a linked list which stores all the collisions for that hash value.
+	\item[Open Addressing] A probe sequence is used to check for values in a specific order. Performace degrades after a load factor above 0.7 and hash function must be very uniformly distributed.
+	\item[Cuckoo] Assures constant lookup time in the worst case. Uses multiple hash functions, whenever there is a collision, it uses the next hash function to store the value. Extremely good at utilizing space.
+\end{description}
+There are two main methods for {\bf resizing} a hashtable:
+\begin{enumerate}
+	\item {\bf Rehash}: A new table size is allocated and every entry is copied over using the new hash function.
+	\item {\bf Incremental}: Create a new table of the larger size, keeping the old table. Perform lookups and deletes on both tables. Whenever you insert, only insert into the new table, as well as copy over a number of element from the old table. When all elements are moved over, delete the old table.
+\end{enumerate}
 A technique to speed up deletes is to use {\bf Tombstones}. A tombstone is a special entry that is inserted in place of an element you wish to delete. It's ignored during lookups, and replaced during inserts.
 
-Collisions resolution could be done one of several ways: {\bf Chaining}, {\bf Open Addressing}, {\bf Cuckoo}
 
+\clearpage
 \subsection{Problems}
 	\begin{enumerate}
 		\item Implement an algorithm to determine if a string has all unique characters. What if you cannot use additional data structures
@@ -426,7 +435,7 @@ QuickSort(list){
 
 
 %-----------------------------------------------------------------------------------------------------------------
-
+\clearpage
 \subsection{HeapSort}
 \marginnote{\scriptsize{CLRS pg.151}}
 
@@ -540,6 +549,8 @@ HeapSort(A){
 	{\caption*{Example of heaping an array}}
 \end{figure}
 
+
+\clearpage
 	\subsection{Problems}
 		\begin{enumerate}
 			\item Write a method to sort an array of strings so that all the anagrams are next to each other.
@@ -562,33 +573,33 @@ HeapSort(A){
 \marginnote{\scriptsize{CLRS pg.287}}
 Binary Trees are family of data structures efficient at lookups. Data is stored that $Right \leq Node \leq Left$. BSTs are {\bf unbalanced}, meaning one part of the tree may become much larger then the other, hurting the efficiency. {\bf Search/Insert:} $O(n \log n)$; {\bf Delete:} $O(n)$.
 
-\begin{lstlisting}[style=pseudo]
-Search(node, val){
-	if node == Nil or node.key == val
-		return node
-	if val > node.key
-		return Search(node.left, val)
-	else
-		return Search(node.right, val)
-}
-//TODO: chage to recursive insert
-Insert(T, val){
-	x = T.root
-	while x != Nil
-		if val > x.key
-			x = x.left
-		else
-			x = x.right
-	if val > x.parent.key
-		x.left = val
-	else
-		x.right = val
-}
-Delete(T, node){
-	if node.left == Nil and node.right == Nil
-	//TODO
-}
-\end{lstlisting}
+%\begin{lstlisting}[style=pseudo]
+%Search(node, val){
+	%if node == Nil or node.key == val
+		%return node
+	%if val > node.key
+		%return Search(node.left, val)
+	%else
+		%return Search(node.right, val)
+%}
+%Insert(node, val){
+	%if node is empty
+		%node = val
+%
+	%if val > .key
+			%x = x.left
+		%else
+			%x = x.right
+	%if val > x.parent.key
+		%x.left = val
+	%else
+		%x.right = val
+%}
+%Delete(T, node){
+	%if node.left == Nil and node.right == Nil
+	%//TODO
+%}
+%\end{lstlisting}
 
 \begin{figure}[h]
 	\centering
@@ -807,33 +818,33 @@ Whenever a node is inserted or deleted, we need to check the node's children for
 \subsubsection{AVL Trees}
 The height property of an AVL Tree is that {\bf the heights of the two child subtrees of any node differ by at most one}. AVL Trees are more rigidly balanced than Red-Black Trees, leading to {\bf slower inserts and deletes} but {\bf faster search}.
 
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[style=pseudo]
-balanceFactor(node) => height(node.left) - height(node.right)
-Insert(node, val){
-	if node is Nil
-		node.key = val
-		return node
-	if val > node.key
-		node.left = Insert(node.left, val)
-		if balanceFactor(node) > 1
-			if val > node.left.key
-				LeftRotate(node)
-			LeftRotate(node)
-	if val <= node.key
-		node.right = Insert(node.right, val)
-		if balanceFactor(node) < -1
-			if val < node.right.key
-				RightRotate(node)
-			RightRotate(node)
-	return node
-}
-
-Delete(z){
-	//finish later, very complex
-}
-\end{lstlisting}
-\end{minipage}
+%\begin{minipage}{\linewidth}
+%\begin{lstlisting}[style=pseudo]
+%balanceFactor(node) => height(node.left) - height(node.right)
+%Insert(node, val){
+	%if node is Nil
+		%node.key = val
+		%return node
+	%if val > node.key
+		%node.left = Insert(node.left, val)
+		%if balanceFactor(node) > 1
+			%if val > node.left.key
+				%LeftRotate(node)
+			%LeftRotate(node)
+	%if val <= node.key
+		%node.right = Insert(node.right, val)
+		%if balanceFactor(node) < -1
+			%if val < node.right.key
+				%RightRotate(node)
+			%RightRotate(node)
+	%return node
+%}
+%
+%Delete(z){
+	%//finish later, very complex
+%}
+%\end{lstlisting}
+%\end{minipage}
 %-----------------------------------------------------------------------------------------------------------------
 
 \subsubsection{Red-Black Trees}
@@ -894,42 +905,42 @@ Red-Black Trees are less rigidly balanced than AVL Trees, leading to {\bf slower
 \end{tikzpicture}
 \end{figure}
 
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[style=pseudo]
-//TODO: Make recursive
-Insert(z){
-	find leaf where node should be attached -> y
-	z.parent = y
-	if z.key > y.key
-		y.left = z
-	else
-		y.right = z
-	z.color = red
-
-	//Maintain height property
-	while z.parent is red
-		if z.parent is a left-child
-			if z.uncle is red
-				z.parent.color = black
-				z.uncle.color = black
-				z.grandparent.color = red
-				z = z.grandparent
-			if z.uncle is black and z is a right-child
-				z = z.parent
-				LeftRotate(z)
-			if z's uncle is black and z is a left-child
-				z.parent.color = black
-				z.grandparent.color = red
-				RightRotate(z.grandparent)
-		else
-			Same as above but switch left and right rotate
-	root.color = black
-}
-Delete(z){
-	//finish later, very complex
-}
-\end{lstlisting}
-\end{minipage}
+%\begin{minipage}{\linewidth}
+%\begin{lstlisting}[style=pseudo]
+%//TODO: Make recursive
+%Insert(z){
+	%find leaf where node should be attached -> y
+	%z.parent = y
+	%if z.key > y.key
+		%y.left = z
+	%else
+		%y.right = z
+	%z.color = red
+%
+	%//Maintain height property
+	%while z.parent is red
+		%if z.parent is a left-child
+			%if z.uncle is red
+				%z.parent.color = black
+				%z.uncle.color = black
+				%z.grandparent.color = red
+				%z = z.grandparent
+			%if z.uncle is black and z is a right-child
+				%z = z.parent
+				%LeftRotate(z)
+			%if z's uncle is black and z is a left-child
+				%z.parent.color = black
+				%z.grandparent.color = red
+				%RightRotate(z.grandparent)
+		%else
+			%Same as above but switch left and right rotate
+	%root.color = black
+%}
+%Delete(z){
+	%//finish later, very complex
+%}
+%\end{lstlisting}
+%\end{minipage}
 
 
 
@@ -981,20 +992,18 @@ A Bloom Filter is a space efficient probalistic data structure that's used to te
 
 \clearpage
 \section{Bit Manipulation}
-
 Bit Manipulation is the act of manipualting individual bits within data. It can reduce the need to loop over a data structure and can give many-fold speed ups, as bit manipulations are {\bf processed in parallel}, but the code can become rather more difficult to write and maintain. {\bf Used in} low-level device control, error detection and correction algorithms, data compression, encryption algorithms, and optimization.
-
 	\subsection{Operations}
-	Bit manipulation supports a number operations: OR \text{\textbar}, AND \& , XOR \string^ , SHIFT << , and NOT \string~ .
-	\begin{lstlisting}[style=pseudo]
+		Bit manipulation supports a number operations: OR \text{\textbar}, AND \& , XOR \string^ , SHIFT << , and NOT \string~ .
+		\begin{lstlisting}[style=pseudo]
 	0110 | 0001 = 0111
 	1000 & 1011 = 1000
 	1100 ^ 1010 = 0110
 	1101 >> 2    = 0011
 	~1001        = 0110
 	1011 & (~0 << 2) = 1011 & 1100 = 1000
-	\end{lstlisting}
-	Arthemetic operations are also supported.
+		\end{lstlisting}
+		Arthemetic operations can be used.
 	\begin{lstlisting}[style=pseudo]
 	0110 + 0010 = 1000
 	0110 - 0011 = 0101
@@ -1028,11 +1037,11 @@ setBit(n, i){
 clearBit(n, i){
 	return n & ~(1 << i)
 }
-	clearBit(11001101, 6)
-	= 11001101 & ~(1 << 6)
+	clearBit(11001101, 7)
+	= 11001101 & ~(1 << 7)
 	= 11001101 & ~(01000000)
 	= 11001101 & 10111111
-	= 10001111
+	= 10001101
 
 //Sets the value of a bit at the ith position to u
 updateBit(n, i, u){
@@ -1470,98 +1479,9 @@ updateBit(n, i, u){
 
 	%-----------------------------------------------------------------------------------------------------------------
 
-	\subsection{k-Means Clustering}
-
-	K-means clustering aims to partition a number of points in $k$ groups/clusters. We have the optiminal distribution of clusters when every point is closest to the center of it's cluster then any other center of the clusters. The problem is {\bf NP-hard}; however, there are efficient heuristic algorithm scan converge quickly to a local optimum. {\bf Used in} reducing an image color pallete to $k$ colors and feature analysis for machine learning.
-	\\ \\
-	As a heuristic algorithm, there is no guarantee that it will converge to the global optimum, and the result may depend on the initial clusters. As the algorithm is usually very fast, it is common to run it multiple times with different starting conditions. {\bf Worst Case:} $2^\Omega(n)$ to find globally optimal solution.
-	\\ \\
-	{\bf Method:} Choose $k$ "mean" points and place them randomly. Produce an {\bf Voronoi Diagram} using those "mean" points. Find the center of each region and move the "mean" point there. Repeat until the clusters settle. Run the algorithm multiple times with different initial "mean" points to assure the optimal solution is found.
-
-	\tikzstyle{point}=[circle,fill=black!50,minimum size=0.15cm,inner sep=0pt]
-	\tikzstyle{mpoint}=[fill=black,minimum size=0.15cm,inner sep=0pt]
-	\begin{figure}[h]
-		\centering
-		\begin{subfigure}{.4\textwidth}
-			\centering
-			\begin{tikzpicture}[scale=0.4]
-				\foreach \pos/\name in {{(0,7.5)/a1}, {(0,6.5)/b1}, {(0,5.5)/c1},
-										{(1,4)/a2}, {(1,3)/b2}, {(2,2)/c2}, {(3,2)/d2}, {(4,3)/e2}, {(4,4)/f2},
-										{(5,7.5)/a3}, {(5,6.5)/b3}, {(5,5.5)/c3}}
-					\node[point] (\name) at \pos {};
-
-				\node[mpoint] (m1) at (0.75,8.5) {};
-				\node[mpoint] (m2) at (0.75,4.5) {};
-				\node[mpoint] (m3) at (4.75,4.5) {};
-			\end{tikzpicture}
-			{\caption*{Place three mean points randomly}}
-		\end{subfigure}
-		\begin{subfigure}{.4\textwidth}
-			\centering
-			\begin{tikzpicture}[scale=0.4]
-				\foreach \pos/\name in {{(0,7.5)/a1}, {(0,6.5)/b1}, {(0,5.5)/c1},
-										{(1,4)/a2}, {(1,3)/b2}, {(2,2)/c2}, {(3,2)/d2}, {(4,3)/e2}, {(4,4)/f2},
-										{(5,7.5)/a3}, {(5,6.5)/b3}, {(5,5.5)/c3}}
-					\node[point] (\name) at \pos {};
-
-				\node[mpoint] (m1) at (0.75,8.5) {};
-				\node[mpoint] (m2) at (0.75,4.5) {};
-				\node[mpoint] (m3) at (4.75,4.5) {};
-
-				\path[draw] (3.5,7) -- (-1,7);
-				\path[draw] (3.5,7) -- (3.5,1);
-				\path[draw] (3.5,7) -- (5.5,9);
-			\end{tikzpicture}
-			{\caption*{Create regions based on the mean points}}
-		\end{subfigure}
-		\begin{subfigure}{.4\textwidth}
-			\centering
-			\begin{tikzpicture}[scale=0.4]
-				\foreach \pos/\name in {{(0,7.5)/a1}, {(0,6.5)/b1}, {(0,5.5)/c1},
-										{(1,4)/a2}, {(1,3)/b2}, {(2,2)/c2}, {(3,2)/d2}, {(4,3)/e2}, {(4,4)/f2},
-										{(5,7.5)/a3}, {(5,6.5)/b3}, {(5,5.5)/c3}}
-					\node[point] (\name) at \pos {};
-				\node[mpoint, fill=black!50] (m1o) at (0.75,8.5) {};
-				\node[mpoint, fill=black!50] (m2o) at (0.75,4.5) {};
-				\node[mpoint, fill=black!50] (m3o) at (4.75,4.5) {};
-
-				\node[mpoint] (m1) at (0,7.5) {};
-				\node[mpoint] (m2) at (1.15,3.6) {};
-				\node[mpoint] (m3) at (4.5,5.6) {};
-
-				\path[draw, ->] (m1o) -- (m1);
-				\path[draw, ->] (m2o) -- (m2);
-				\path[draw, ->] (m3o) -- (m3);
-
-				\path[draw] (3.5,7) -- (-1,7);
-				\path[draw] (3.5,7) -- (3.5,1);
-				\path[draw] (3.5,7) -- (5.5,9);
-			\end{tikzpicture}
-			{\caption*{Find the center of the points in each region and move the mean points there}}
-		\end{subfigure}
-		\begin{subfigure}{.4\textwidth}
-			\centering
-			\begin{tikzpicture}[scale=0.4]
-				\foreach \pos/\name in {{(0,7.5)/a1}, {(0,6.5)/b1}, {(0,5.5)/c1},
-										{(1,4)/a2}, {(1,3)/b2}, {(2,2)/c2}, {(3,2)/d2}, {(4,3)/e2}, {(4,4)/f2},
-										{(5,7.5)/a3}, {(5,6.5)/b3}, {(5,5.5)/c3}}
-					\node[point] (\name) at \pos {};
-
-				\node[mpoint] (m1) at (0,7.5) {};
-				\node[mpoint] (m2) at (1.15,3.6) {};
-				\node[mpoint] (m3) at (4.5,5.6) {};
-
-				\path[draw] (2.25,6) -- (-1,4);
-				\path[draw] (2.25,6) -- (4.25,1);
-				\path[draw] (2.25,6) -- (4,8.5);
-			\end{tikzpicture}
-			{\caption*{Re-draw the Voronoi Diagrams using the mean points and repeat}}
-		\end{subfigure}
-
-	\end{figure}
-
 	%-----------------------------------------------------------------------------------------------------------------
 
+	\clearpage
 	\subsection{Convex Hull}
 	\marginnote{\scriptsize{CLRS pg.1029}}
 	The Convex Hull of a set of points is the {\bf smallest polygon that contains all points}. Imagine it like an elastic band wrapped around a number of pegs in a board. {\bf Used with} bezier curves, pattern recogintion, image processing, statistics, and static code analysis. We'll look at two algorithms to solve this problem.
@@ -1847,52 +1767,206 @@ updateBit(n, i, u){
 		\end{figure}
 
 
+		\clearpage
+		\subsection{k-Means Clustering}
+
+		K-means clustering aims to partition a number of points in $k$ groups/clusters. We have the optiminal distribution of clusters when every point is closest to the center of it's cluster then any other center of the clusters. The problem is {\bf NP-hard}; however, there are efficient heuristic algorithm scan converge quickly to a local optimum. {\bf Used in} reducing an image color pallete to $k$ colors and feature analysis for machine learning.
+		\\ \\
+		As a heuristic algorithm, there is no guarantee that it will converge to the global optimum, and the result may depend on the initial clusters. As the algorithm is usually very fast, it is common to run it multiple times with different starting conditions. {\bf Worst Case:} $\Omega(2^n)$ to find globally optimal solution.
+		\\ \\
+		{\bf Method:} Choose $k$ "mean" points and place them randomly. Produce an {\bf Voronoi Diagram} using those "mean" points. Find the center of each region and move the "mean" point there. Repeat until the clusters settle. Run the algorithm multiple times with different initial "mean" points to assure the optimal solution is found.
+
+		\tikzstyle{point}=[circle,fill=black!50,minimum size=0.15cm,inner sep=0pt]
+		\tikzstyle{mpoint}=[fill=black,minimum size=0.15cm,inner sep=0pt]
+		\begin{figure}[h]
+			\centering
+			\begin{subfigure}{.4\textwidth}
+				\centering
+				\begin{tikzpicture}[scale=0.4]
+					\foreach \pos/\name in {{(0,7.5)/a1}, {(0,6.5)/b1}, {(0,5.5)/c1},
+											{(1,4)/a2}, {(1,3)/b2}, {(2,2)/c2}, {(3,2)/d2}, {(4,3)/e2}, {(4,4)/f2},
+											{(5,7.5)/a3}, {(5,6.5)/b3}, {(5,5.5)/c3}}
+						\node[point] (\name) at \pos {};
+
+					\node[mpoint] (m1) at (0.75,8.5) {};
+					\node[mpoint] (m2) at (0.75,4.5) {};
+					\node[mpoint] (m3) at (4.75,4.5) {};
+				\end{tikzpicture}
+				{\caption*{Place three mean points randomly}}
+			\end{subfigure}
+			\begin{subfigure}{.4\textwidth}
+				\centering
+				\begin{tikzpicture}[scale=0.4]
+					\foreach \pos/\name in {{(0,7.5)/a1}, {(0,6.5)/b1}, {(0,5.5)/c1},
+											{(1,4)/a2}, {(1,3)/b2}, {(2,2)/c2}, {(3,2)/d2}, {(4,3)/e2}, {(4,4)/f2},
+											{(5,7.5)/a3}, {(5,6.5)/b3}, {(5,5.5)/c3}}
+						\node[point] (\name) at \pos {};
+
+					\node[mpoint] (m1) at (0.75,8.5) {};
+					\node[mpoint] (m2) at (0.75,4.5) {};
+					\node[mpoint] (m3) at (4.75,4.5) {};
+
+					\path[draw] (3.5,7) -- (-1,7);
+					\path[draw] (3.5,7) -- (3.5,1);
+					\path[draw] (3.5,7) -- (5.5,9);
+				\end{tikzpicture}
+				{\caption*{Create regions based on the mean points}}
+			\end{subfigure}
+			\begin{subfigure}{.4\textwidth}
+				\centering
+				\begin{tikzpicture}[scale=0.4]
+					\foreach \pos/\name in {{(0,7.5)/a1}, {(0,6.5)/b1}, {(0,5.5)/c1},
+											{(1,4)/a2}, {(1,3)/b2}, {(2,2)/c2}, {(3,2)/d2}, {(4,3)/e2}, {(4,4)/f2},
+											{(5,7.5)/a3}, {(5,6.5)/b3}, {(5,5.5)/c3}}
+						\node[point] (\name) at \pos {};
+					\node[mpoint, fill=black!50] (m1o) at (0.75,8.5) {};
+					\node[mpoint, fill=black!50] (m2o) at (0.75,4.5) {};
+					\node[mpoint, fill=black!50] (m3o) at (4.75,4.5) {};
+
+					\node[mpoint] (m1) at (0,7.5) {};
+					\node[mpoint] (m2) at (1.15,3.6) {};
+					\node[mpoint] (m3) at (4.5,5.6) {};
+
+					\path[draw, ->] (m1o) -- (m1);
+					\path[draw, ->] (m2o) -- (m2);
+					\path[draw, ->] (m3o) -- (m3);
+
+					\path[draw] (3.5,7) -- (-1,7);
+					\path[draw] (3.5,7) -- (3.5,1);
+					\path[draw] (3.5,7) -- (5.5,9);
+				\end{tikzpicture}
+				{\caption*{Find the center of the points in each region and move the mean points there}}
+			\end{subfigure}
+			\begin{subfigure}{.4\textwidth}
+				\centering
+				\begin{tikzpicture}[scale=0.4]
+					\foreach \pos/\name in {{(0,7.5)/a1}, {(0,6.5)/b1}, {(0,5.5)/c1},
+											{(1,4)/a2}, {(1,3)/b2}, {(2,2)/c2}, {(3,2)/d2}, {(4,3)/e2}, {(4,4)/f2},
+											{(5,7.5)/a3}, {(5,6.5)/b3}, {(5,5.5)/c3}}
+						\node[point] (\name) at \pos {};
+
+					\node[mpoint] (m1) at (0,7.5) {};
+					\node[mpoint] (m2) at (1.15,3.6) {};
+					\node[mpoint] (m3) at (4.5,5.6) {};
+
+					\path[draw] (2.25,6) -- (-1,4);
+					\path[draw] (2.25,6) -- (4.25,1);
+					\path[draw] (2.25,6) -- (4,8.5);
+				\end{tikzpicture}
+				{\caption*{Re-draw the Voronoi Diagrams using the mean points and repeat}}
+			\end{subfigure}
+
+		\end{figure}
+
+
 
 \clearpage
 \section{Dynamic Programming}
-	\subsection{Greedy Algorithms}
-	\subsection{Bottom-up Approach}
-	Bottom-up recursion is often the most intuitive. We start with knowing how to solve the
-	problem for a simple case, like a list with only one element, and figure out how to solve
-	the problem for two elements, then for three elements, and so on. The key here is to
-	think about how you can build the solution for one case off of the previous case
-	\subsection{Top-Down Approach}
-	Top-Down Recursion can be more complex, but it's sometimes necessary for problems.
-	In these problems, we think about how we can divide the problem for case N into sub-
-	problems. Be careful of overlap between the cases
+	Dynamic Programming is a technique for solving difficult problems by breaking them down into simpler subproblems. The goal is to find and utilize {\bf overlapping subproblems} to limit the solution space. Two main methods are used:
+	\begin{description}
+		\item[Top-down] Starts at the "top" of the problem, splitting it into subprolema nd solving them recursively. Whenever a solution is found, it's recorded. If that subproblem is ever visited in the recursion, the previously solved answer is used. {\bf Examples} Fibonacci Numbers.
+		\item[Bottom-up] Topologically progress through the problem, starting at the lowest base cases. This ensures only the paths needed are considered. This process may span mutliple dimensions of the problem, leading to a tabular lookup table. {\bf Examples:} The knapsack problem,
+	\end{description}
 
-
-\subsection{Problems}
-	\begin{enumerate}
-		\item A child is running up a staircase with n steps, and can hop either 1 step, 2 steps, or 3 steps at a time. Implement a method to count how many possible ways the child can run up the stairs.
-		\item Write a method to compute all permutations of a string.
-		\item Write an algorithm to print all ways of arranging eight queens on an 8x8 chess board so that none of them share the same row, column or diagonal. In this case, "diagonal" means all diagonals, not just the two that bisect the board.
-	\end{enumerate}
-
-	\subsection{Bresenham's line algorithm}
-		%http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-	\subsection{Boyer–Moore String Search Algorithm}
-		%http://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string_search_algorithm
-	\subsection{NP-Complete}
-		\subsubsection{Travelling Salesman}
-		\subsubsection{Knacksack Problem}
+	\subsection{Problems}
+		\begin{enumerate}
+			\item A child is running up a staircase with n steps, and can hop either 1 step, 2 steps, or 3 steps at a time. Implement a method to count how many possible ways the child can run up the stairs.
+			\item Write a method to compute all permutations of a string.
+			\item Write an algorithm to print all ways of arranging eight queens on an 8x8 chess board so that none of them share the same row, column or diagonal. In this case, "diagonal" means all diagonals, not just the two that bisect the board.
+		\end{enumerate}
 
 
 \clearpage
 \section{Systems}
 	\subsection{Scheduling}
+
+		turn around time,
+		response time
+		multi-level feedback queue
+		cache affinity
+		cache coherence
+		MQMs
+
+
 	\subsection{Threads}
+
+	address space
+
+
+	A thread's {\bf critical section} is the part of the code where the thread wishes to access memory shared by other threads. Two threads both interacting the sma epiece of shared memory at the same time can have unexpected results.
+
+	A mutex (mutual exclusion) ensures the two threads/processes are not in their critical sections at the same time. Mutexes can be obtained using locks, conditional variables, or semaphores.
+
+
+	\subsection{Locks}
+
+
+	\subsection{Condition Variables}
+	In multi-threaded programs it's useful for a thread to wait until a certain condition is met, not just if something has been unlocked. It is a {\bf queue} that threads can put themselves in until the variable becomes 0.
+
+	A condition avriable has two operations; \texttt{wait()} and \texttt{signal()}. \texttt{wait()} is used to put the thread to sleep and wait for the signal
+
+	bounded buffer problem
+
+
+
+
 	\subsection{Semaphores}
+		A semaphore is an abstract data type used for controlling access between multiple processes running in parallel. {\bf Counting Semaphores} allow for an internal count, where as {\bf Binary Semaphores} are restricted to 1/0, useful for simple locks. The value of the semaphore is the number of units of the resource that are currently available.
+
+		\begin{lstlisting}[style=pseudo]
+	class semaphore{
+		init(v){
+			semaphore's value is set to v
+		}
+		wait(){
+			wait until value of semaphore is greater than 0
+			decrement the value of semaphore by 1
+		}
+		post(){
+			increment the value of semaphore by 1
+			if there are 1 or more threads waiting, wake 1
+		}
+	}
+		\end{lstlisting}
+
+		To build a {\bf simple lock}, we can use a binary semaphore and just surround the critical section
+		\begin{lstlisting}[style=pseudo]
+	s = new Semaphore(0, 1)
+	s.wait()
+	//critical section
+	s.post()
+		\end{lstlisting}
+
+		To use a semaphore a {\bf condition variable} For example a thread waiting until a list is empty.
+
+		\begin{lstlisting}[style=pseudo]
+	s = new Semaphore(0,0)
+	parent(){
+		start child
+		s.wait()
+		return "finished"
+	}
+	child(){
+		do action
+		s.post()
+		return
+	}
+		\end{lstlisting}
+
+
+
+
 	\subsection{Deadlocks}
-	In order for a deadlock to occur, you must have all four of the following conditions met:
-	7. Mutual Exclusion: Only one process can access a resource at a given time. (Or, more
-	accurately, there is limited access to a resource. A deadlock could also occur if a
-	resource has limited quantity.)
-	2. Hold and Wait: Processes already holding a resource can request additional resources,
-	without relinquishing their current resources.
-	3. Wo Preemption: One process cannot forcibly remove another process'resource.
-	4. Circular Wait: Two or more processes form a circular chain where each process is
-	waiting on another resource in the chain.
+		In order for a deadlock to occur, you must have all four of the following conditions met:
+		\begin{enumerate}
+			\item {\bf Mutual Exclusion}: Only one process can access a resource at a given time. (Or, more accurately, there is limited access to a resource. A deadlock could also occur if a resource has limited quantity.)
+			\item {\bf Hold and Wait}: Processes already holding a resource can request additional resources, without relinquishing their current resources.
+			\item {\bf Wo Preemption}: One process cannot forcibly remove another process'resource.
+			\item {\bf Circular Wait}: Two or more processes form a circular chain where each process is waiting on another resource in the chain.
+		\end{enumerate}
+
+
 
 
 	\subsection{Problems}
@@ -1900,14 +1974,6 @@ updateBit(n, i, u){
 			\item Design a class which provides a lock only if there are no possible deadlocks.
 			\item In the famous dining philosophers problem, a bunch of philosophers are sitting around a circular table with one chopstick between each of them. A philosopher needs both chopsticks to eat, and always picks up the left chopstick before the right one. A deadlock could potentially occur if all the philosophers reached for the left chopstick at the same time. Using threads and locks, implement a simulation of the dining philosophers problem that prevents deadlocks.
 		\end{enumerate}
-
-
-\clearpage
-\section{Big Data}
-	\subsection{Hadoop}
-	\subsection{Databases?}
-	\subsection{MapReduce}
-
 
 \clearpage
 \section{Cryptography}
@@ -2051,69 +2117,58 @@ updateBit(n, i, u){
 	hash("hello" + "YYLmfY6IehjZMQ") = a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007
 		\end{lstlisting}
 
-\clearpage
-\section{Web}
-	\subsection{SSL and HTTPS}
-	\subsection{EcmaScript 5}
-	\subsection{AJAX}
-	\subsection{Web RPC}
-	\subsection{Full Request}
-		%https://github.com/alex/what-happens-when
+
+
+
 \clearpage
 \section{Behavourial Questions}
-	Prep for these, you shouldn't have to think about them
-	hardest bug
-	current project
-	favourite Open source project
-	cleverest solution
-	what have you contributed to OSS
+	\subsection{Project Questions}
+		You will most likely be ask at least one of the following questions below. Prep a response for each question specifying a related project/job.
+		\begin{itemize}
+			\item Mosting Challenging
+			\item Most Challenging
+			\item What You Learned
+			\item Most Interesting
+			\item Hardest Bug
+			\item Enjoyed Most
+			\item Conflicts with Teammates
+		\end{itemize}
+		Also, for each item on your resume; Project, job, qualification, etc. you should have a fun story or justification for it. Remember to structure your story to have a {\bf one sentence hook} and a {\bf brief} explanation. Memorize a few keywords for each, and build your story from that.
 
+	\subsection{Weaknesses}
+		When asked about your weaknesses, {\bf give a real weakness}. "My greatest weakness is that I work too hard" is a cop-put and they'll see right through it. A better answer conveys a real, legitimate weakness but emphasizes how you work to overcome it. Ask a close friend/co-worker to give you a honest answer for this.
+		\\ \\
+		{\bf For example:} "Sometimes, I don't have a very good attention to detail. While that's good because it lets me execute quickly, it also means that I sometimes make careless mistakes. Because of that, I make sure to always have someone else double check my work.""
+
+	\subsection{Questions for Your Interviewer}
+		Questions you ask your interviewer will factor in their decisions, whether subconsciously or consciously. Prepare them in advance.
+
+		\subsubsection{Genuine Questions}
+			These questions will give you a good feel for what the day-to-day life is like at the company.
+			\begin{enumerate}
+				\item "How much of your day do you spend coding?"
+				\item "How many meetings do you have every week?"
+				\item "What is the ratio of testers to developers to program managers? What is the interaction like? How does project planning happen on the team?"
+			\end{enumerate}
+
+		\subsubsection{Insightful Questions}
+			These questions are designed to demonstrate your deep knowledge of programming or technologies, and they also demonstrate your passion for the company or product.
+			\begin{enumerate}
+				\item "I noticed that you use technology X. How do you handle problem Y?"
+				\item "Why did the product choose to use the X protocol over the Y protocol? I know it has benefits like A, B, C, but many companies choose not to use it because of issue D."
+			\end{enumerate}
+
+		\subsubsection{Passion Questions}
+			These questions are designed to demonstrate your passion for technology. They show that you're interested in learning and will be a strong contributor to the company.
+			\begin{enumerate}
+				\item "I'm very interested in scalability. Did you come in with a background in this, or what opportunities are there to learn about it?"
+				\item "I'm not familiar with technology X, but it sounds like a very interesting solution. Could you tell me a bit more about how it works?""
+			\end{enumerate}
 
 
 \clearpage
 \section{Designing Algorithms}
-
-	\subsection{Design Patterns}
-
-		\subsubsection{Singleton}
-		The Singleton pattern ensures that a class has only one instance and ensures access to
-		the instance through the application. It can be useful in cases where you have a "global"
-		object with exactly one instance. For example, we may want to implement Restaurant
-		such that it has exactly one instance of Restaurant.
-%		1 public class Restaurant {
-%		2 private static Restaurant _instance = null;
-%		3 public static Restaurant getlnstanceQ {
-%		4 if (_instance == null) {
-%		' _instance = new RestaurantQ;
-%		6  >
-%		return _instance;
-%		8 }
-%		9 }
-
-
-		\subsubsection{Factory}
-		The Factory Method offers an interface for creating an instance of a class, with its
-		subclasses deciding which class to instantiate. You might want to implement this with
-		the creator class being abstract and not providing an implementation for the Factory
-		method. Or, you could have the Creator class be a concrete class that provides an imple-
-		mentation for the Factory method. In this case, the Factory method would take a param-
-		eter representing which class to instantiate.
-		%1 public class CardGame {
-		%2 public static CardGame createCardGame(GameType type) {
-		%3 if (type == GameType.Poker) {
-		%4 return new PokerGameQ;
-		%} else if (type == GameType.BlackDack) {
-		%6 return new BlackJackGameQ;
-		%8 return null;
-		%9 }
-		%18 }
-
-		\subsubsection{Facade}
-		\subsubsection{Flyweight}
-		\subsubsection{Proxy}
-		\subsubsection{Observer}
-		\subsubsection{Template Method}
-
+	Quickly designing algorithms in interviews can be tough. The following are techniques that will help you.
 
 	\subsection{Five Algorithm Approaches}
 		The following are five techniques for quickly figuring out an algorithm for a solution.
@@ -2135,15 +2190,57 @@ updateBit(n, i, u){
 		\end{description}
 
 
-	\subsection{Object-Oriented Design}
-
-	\subsection{Test Cases}
-		In general, you should think about the following types of test cases:
+	\subsection{Design Patterns}
+		There are {\bf many} design patterns that have much material written about them. We will only cover the most used ones.
 		\begin{description}
-			\item[The normal case] Does it generate the correct output for typical inputs? Remember to think about potential issues here. For example, because sorting often requires some sort of partitioning, it's reasonable to think that the algorithm might fail on arrays with an odd number of elements, since they can't be evenly partitioned. Your test case should list both examples.
-			\item[The extremes] What happens when you pass in an empty array? Or a very small (one element) array? What if you pass in a very large one?
-			\item[Nulls and "illegal" input] It is worthwhile to think about how the code should behave when given illegal input. For example, if you're testing a function to generate the nth Fibonacci number, your test cases should probably include the situation where n is negative.
-			\item[Strange input] What happens when you pass in an already sorted array? Or an array that's sorted in reverse order?
+			\item[Observer] Is an object that maintains a list of dependants called observers and notifies the of any state changes, usually by calling methods. {\bf Used in} event handling systems.
+
+			\item[Singleton] A class has only one instance and ensures access to the instance through the application. Often used for {\bf state objects}. \par
+				\begin{lstlisting}[style=pseudo]
+	class State {
+		_instance = null;
+		getlnstance(){
+			if (_instance == null)
+				_instance = new State();
+			return _instance;
+		}
+	}
+				\end{lstlisting}
+
+			\item[Wrapper] Is used to provide a simplifed and expected interface to a larger, more complex object. It also {\bf decouples the code} that uses the system from the details of the subsystems, making it easier to modify the system later. Also known as {\bf Facade, Adpater, or Decorater}.
+
+			\item[Factory] An interface for creating an instance of a class. Creating an object often requires more coplex processes that are not needed once the   object is created. A factory can contain these processes to keep the object's definition cleaner. Can also produce {\bf multiple types} of objcts. \par
+				\begin{lstlisting}[style=pseudo]
+	class CardGame {
+		createCardGame(type) {
+			if type == GameType.Poker
+				return new PokerGame()
+			else if type == GameType.BlackJack
+				return new BlackJackGame()
+			return null;
+		}
+	}
+				\end{lstlisting}
+
+		\end{description}
+
+
+	\subsection{Object-Oriented Design}
+		Regardless of whether the object is a physical item or a technical task, object-oriented design questions can be tackled in similar ways. The following approach will work well for many problems.
+		\begin{enumerate}
+			\item {\bf Handle Ambigulty} Object-oriented design (OOD) questions are often intentionally vague in order to test whether you'll make assumptions or if you'll ask clarifying questions. You should inquire who is going to use it and how they are going to use it. Depending on the question, you may even want to go through the "six Ws": who, what, where, when, how, why.
+			\item {\bf Define the Core Objects} Figure out the key things you are going to create objects for.
+			\item {\bf Analyze Relationships} Decide how your core objects interact with each. Which objects are members of which other objects? Do any objects inherit from any others? Are relationships many-to-many or one-to-many? It's very easy to make incorrect assumptions. You should talk to your interviewer about how general purpose your design should be.
+			\item {\bf Investigate Actions} Identify what actions/methods each object will want to have and how they will effect their relationship with other objects.
+	\end{enumerate}
+
+	\subsection{Testing}
+		Consider the following types of test cases when testing your alogrithms.
+		\begin{description}
+			\item[The Normal Case] Does it generate the correct output for typical inputs? Remember to think about potential issues here. For example, because sorting often requires some sort of partitioning, it's reasonable to think that the algorithm might fail on arrays with an odd number of elements, since they can't be evenly partitioned. Your test case should list both examples.
+			\item[The Extremes] What happens when you pass in an empty array? Or a very small (one element) array? What if you pass in a very large one?
+			\item[Nulls and "Illegal" Input] It is worthwhile to think about how the code should behave when given illegal input. For example, if you're testing a function to generate the nth Fibonacci number, your test cases should probably include the situation where n is negative.
+			\item[Strange Input] What happens when you pass in an already sorted array? Or an array that's sorted in reverse order?
 		\end{description}
 
 	\subsection{Problems}
@@ -2154,6 +2251,23 @@ updateBit(n, i, u){
 			\item Design and implement a hash table which uses chaining (linked lists) to handle collisions.
 			\item How would you test an ATM in a distributed banking system?
 		\end{enumerate}
+
+%
+%
+		%\clearpage
+		%\section{Web}
+			%\subsection{SSL and HTTPS}
+			%\subsection{EcmaScript 5}
+			%\subsection{AJAX}
+			%\subsection{Web RPC}
+			%\subsection{Full Request}
+				%%https://github.com/alex/what-happens-when
+%
+		%\clearpage
+		%\section{Big Data}
+			%\subsection{Hadoop}
+			%\subsection{Databases?}
+			%\subsection{MapReduce}
 
 
 
