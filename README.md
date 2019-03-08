@@ -5,6 +5,7 @@ I created this document as a way to solidify my CS fundementals, study for techn
 I hope you'll find it as useful as I have. Enjoy!
 
 
+
 ### Contents
 
 #### Data Structures
@@ -13,13 +14,11 @@ I hope you'll find it as useful as I have. Enjoy!
 - Linked Lists
 - Heaps
 - Hashtables
-- Problems
 
 #### Sorting
 - MergeSort
 - QuickSort
 - HeapSort
-- Problems
 
 #### Trees
 - Binary Search Trees
@@ -28,12 +27,10 @@ I hope you'll find it as useful as I have. Enjoy!
 - Radix Tree
 - Self-Balancing Trees
 - Bloom Filter
-- Problems
 
 #### Bit Manipulation
 - Operations
 - Common Tasks
-- Problems
 
 #### Graph Algorithms
 - Representation
@@ -55,7 +52,6 @@ I hope you'll find it as useful as I have. Enjoy!
 - Condition Variables
 - Semaphores
 - Deadlocks
-- Problems
 
 #### Cryptography
 - Assymetric Cryptosystems
@@ -72,5 +68,3 @@ I hope you'll find it as useful as I have. Enjoy!
 - Design Patterns
 - Object-Oriented Design
 - Testing
-- Problems
-
