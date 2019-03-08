@@ -44,6 +44,8 @@ I hope you'll find it as useful as I have. Enjoy!
 - k-Means Clustering
 
 #### Dynamic Programming
+- Top-down
+- Bottom-up
 
 #### Systems
 - Scheduling
